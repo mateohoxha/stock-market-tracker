@@ -1,25 +1,38 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import 'antd/dist/antd.css';
+import StockChart from './components/StockChart';
+import Toolbar from './components/Toolbar';
+import { Divider } from 'antd';
 
-function App() {
+const App = () => {
+  const [isDarkMode, setIsDarkMode] = useState(getInitialMode());
+  const [stockSymbol, setStockSymbol] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('dark', JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
+
+  function getInitialMode() {
+    const savedMode = JSON.parse(localStorage.getItem('dark'));
+    return savedMode || false;
+  }
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(prevMode => !prevMode);
+  }
+
+  const onSelectHandler = (value) => {
+    setStockSymbol(value);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={isDarkMode ? "dark-mode" : "light-mode"}>
+      <Toolbar toggleDarkMode={toggleDarkMode} onSelectHandler={onSelectHandler} />
+      <Divider />
+      <StockChart stockSymbol={stockSymbol} />
     </div>
-  );
+  )
 }
 
 export default App;
